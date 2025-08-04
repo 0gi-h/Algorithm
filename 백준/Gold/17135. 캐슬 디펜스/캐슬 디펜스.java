@@ -7,36 +7,31 @@ public class Main {
    static int[][] map;
    static int MAX = 0;
    public static void main(String[] args) throws IOException {
-      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-      StringTokenizer st = new StringTokenizer(br.readLine());
+      BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+      StringTokenizer st = new StringTokenizer(in.readLine());
       N = Integer.parseInt(st.nextToken());
       M = Integer.parseInt(st.nextToken());
       D = Integer.parseInt(st.nextToken());
       map = new int[N][M];
-      for(int i = 0; i < N; i++) {
-    	  map[i] = Arrays.stream(br.readLine().split(" "))
-    			  .mapToInt(Integer::parseInt)
-    			  .toArray();
+      for(int i=0;i<N;i++) {
+         st = new StringTokenizer(in.readLine());
+         for(int j=0;j<M;j++){
+            map[i][j] = Integer.parseInt(st.nextToken());
+         }
       }
       pick(0,0);
       System.out.println(MAX);
    }
  
-   public static void pick(int idx, int start){
-      if(idx==3){
+   public static void pick(int cnt, int start){
+      if(cnt==3){
          MAX = Math.max(MAX,game());
          return;
       }
-      if(start >= M){
-          return; // 더 이상 선택할 수 있는 인덱스가 없음
+      for(int i=start;i<M;i++){
+         picked[cnt] = i;
+         pick(cnt+1, i+1);
       }
-      
-      // 현재 start 인덱스를 선택하는 경우
-      picked[idx] = start;
-      pick(idx + 1, start + 1);
-      
-      // 현재 start 인덱스를 선택하지 않는 경우
-      pick(idx, start + 1);
    }
  
    public static int game(){
