@@ -4,56 +4,25 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
-
 public class Solution {
-
-	static class Edge implements Comparable<Edge> {
-		int from, to;
-		double weight;
-		
-		Edge(int from, int to, double weight) {
-			this.from = from;
-			this.to = to;
-			this.weight = weight;
-		}
-		
-		@Override
-		public int compareTo(Edge o) {
-			// 10 - 20 : 음수 -> 뒤 값이 크다 : 그럼 그래로 위치(교환 일어나지 않음)
-			// 20 - 10 : 양수 -> 앞 값이 크다 : 교환
-			//음수 - 양수 : 오버플로우, 음수 - 양수 : 언더플로우
-			//return this.weight - o.weight; //아래 코드와 동일한 결과
-			return Double.compare(this.weight, o.weight); //가중치 기준 오름차순 정렬 되도록 비교결과 리턴
-		}
-	}
-	
-	static ArrayList<Edge> edgeList;
-	static int[] parents;
 	static int n;
 	
-	private static void make() {
-		for (int i = 0; i < n; i++) {
-			parents[i] = i;
+	static class Vertex implements Comparable<Vertex>{
+		int e;
+		double w;
+		
+		Vertex(int e, double w) {
+			this.e = e;
+			this.w = w;
 		}
-	}
-	
-	private static int find(int a) {
-		if(a == parents[a]) {
-			return a;
-		}
-		return parents[a] = find(parents[a]);
-	}
-	
-	private static boolean union(int a, int b) {
-		int aRoot = find(a);
-		int bRoot = find(b);
-		if(aRoot == bRoot) {
-			return false;
+		@Override
+		public int compareTo(Vertex o) {
+			// TODO Auto-generated method stub
+			return Double.compare(this.w, o.w);
 		}
 		
-		parents[bRoot] = aRoot;
-		return true;
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -61,8 +30,8 @@ public class Solution {
 		int t = Integer.parseInt(br.readLine());
 		
 		for(int tc = 1; tc <= t; tc++) {
-			n = Integer.parseInt(br.readLine());
-			
+			int n = Integer.parseInt(br.readLine());
+			double result = 0;
 			ArrayList<Integer>[] arr = new ArrayList[n];
 			
 			for(int  i = 0; i < n; i++) {
@@ -78,37 +47,44 @@ public class Solution {
 			
 			double e = Double.parseDouble(br.readLine());
 			
-			parents = new int[n];
-			edgeList = new ArrayList<>();
+			double[] dist = new double[n];
+			Arrays.fill(dist, Integer.MAX_VALUE);
 			
-			for (int i = 0; i < n; i++) {
-				for (int j = i+1; j < n; j++) {
-					int from = i;
-					int to = j;
-					double weight = Math.sqrt(Math.pow(arr[i].get(0) - arr[j].get(0), 2) + Math.pow(arr[i].get(1) - arr[j].get(1), 2));
-					edgeList.add(new Edge(from, to, weight));
+			boolean[] v = new boolean[n];
+			
+			dist[0] = 0;
+			
+			PriorityQueue<Vertex> pq = new PriorityQueue<>();
+			pq.offer(new Vertex(0, 0));
+			
+			while(!pq.isEmpty()) {
+				Vertex cur = pq.poll();
+				
+				if(v[cur.e]) continue;
+				v[cur.e] = true;
+				
+				// 현재 선택된 노드(cur.e)에서 아직 방문하지 않은 모든 노드로의 거리 업데이트
+				for (int i = 0; i < n; i++) {
+					if(!v[i]) {
+						// 현재 노드(cur.e)에서 노드 i까지의 거리 계산
+						double weight = Math.sqrt(Math.pow(arr[cur.e].get(0) - arr[i].get(0), 2) + Math.pow(arr[cur.e].get(1) - arr[i].get(1), 2));
+						
+						// 더 짧은 거리를 발견하면 업데이트
+						if(weight < dist[i]) {
+							dist[i] = weight;
+							pq.offer(new Vertex(i, weight));
+						}
+					}
 				}
 			}
 			
-			Collections.sort(edgeList);
-			make();
-			
-			double result = 0; //최소 신장트리 비용
-			int cnt = 0; //처리된 간선 수
-			
-			for (Edge edge : edgeList) {
-				if(!union(edge.from, edge.to)) continue; //union 실패 : 사이클 발생
-				result += Math.pow(edge.weight, 2) * e;
-				if(++cnt == n-1) break;
+			for (double d : dist) {
+				result += Math.pow(d, 2) * e;
 			}
 			
-			System.out.println("#" + tc + " " + Math.round(result));
+			 System.out.println("#" + tc + " " + Math.round(result));
 		}
 	
-
 		
 	}
-
 }
-
-
