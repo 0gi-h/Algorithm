@@ -60,7 +60,7 @@ public class Main {
 
 		for(int i = 0; i < k; i++) {
 			recursive(0);
-			calc(temp.get(i)[0], temp.get(i)[1], temp.get(i)[2]);
+			//calc(temp.get(i)[0], temp.get(i)[1], temp.get(i)[2]);
 		}
 		
 		System.out.println(min);
