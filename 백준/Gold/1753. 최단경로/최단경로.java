@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -15,6 +16,20 @@ public class Main {
 			this.to = to;
 			this.weight = weight;
 			this.next = next;
+		}
+	}
+	
+	static class Vertex implements Comparable<Vertex> {
+		int no, dis;
+		
+		Vertex(int no, int dis) {
+			this.no = no;
+			this.dis = dis;
+		}
+		
+		@Override
+		public int compareTo(Vertex o) {
+			return Integer.compare(this.dis, o.dis);
 		}
 	}
 
@@ -42,29 +57,25 @@ public class Main {
 			map[from] = new Node(to, weight, map[from]);
 		}
 		
+		PriorityQueue<Vertex> pq = new PriorityQueue<>();
 		dist[start] = 0;
+		pq.offer(new Vertex(start, dist[start]));
 		
-		for (int i = 1; i <= v; i++) {
-			int minIdx = -1;
-			int minD = Integer.MAX_VALUE;
+		while(!pq.isEmpty()) {
+			Vertex cur = pq.poll();
+			if(visited[cur.no]) continue;
+			visited[cur.no]= true; 
+		
 			
-			for (int j = 1; j <= v; j++) {
-				if(!visited[j] && dist[j] < minD) {
-					minIdx = j;
-					minD = dist[j];
+			for (Node temp = map[cur.no]; temp != null; temp = temp.next) {
+				if(!visited[temp.to] && dist[temp.to] > cur.dis + temp.weight) {
+					dist[temp.to] = cur.dis + temp.weight;
+					pq.offer(new Vertex(temp.to, dist[temp.to]));
 				}
 			}
-			
-			if(minIdx == -1) {
-				break;
-			}
-			visited[minIdx] = true;
-			
-			for (Node temp = map[minIdx]; temp != null; temp = temp.next) {
-				if(!visited[temp.to] && minD+temp.weight < dist[temp.to]) {
-					dist[temp.to] =  minD+temp.weight;
-				}
-			}
+		
+		
+		
 		}
 
 		for (int i = 1; i <= v; i++) {
