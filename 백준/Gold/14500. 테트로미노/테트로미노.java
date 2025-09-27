@@ -62,33 +62,30 @@ public class Main {
 	}
 
 	private static void check(int r, int c) {
-		int[][][] shapes = {
-				// ㅗ
-				{{0, 0}, {0, -1}, {0, 1}, {-1, 0}},
-				// ㅜ
-				{{0, 0}, {0, -1}, {0, 1}, {1, 0}},
-				// ㅓ
-				{{0, 0}, {-1, 0}, {1, 0}, {0, -1}},
-				// ㅏ
-				{{0, 0}, {-1, 0}, {1, 0}, {0, 1}}
-			};
+		
+		// 중심을 기준으로 각 방향의 'ㅗ' 모양 확인
+		// ㅗ
+		if (r - 1 >= 0 && c - 1 >= 0 && c + 1 < m) {
+			int sum = map[r][c] + map[r - 1][c] + map[r][c - 1] + map[r][c + 1];
+			result = Math.max(result, sum);
+		}
 
-		for (int[][] shape : shapes) {
-			int sum = 0;
-			boolean isValid = true;
-			for (int[] d : shape) {
-				int nr = r + d[0];
-				int nc = c + d[1];
-				if (nr >= 0 && nc >= 0 && nr < n && nc < m) {
-					sum += map[nr][nc];
-				} else {
-					isValid = false;
-					break;
-				}
-			}
-			if (isValid) {
-				result = Math.max(result, sum);
-			}
+		// ㅜ
+		if (r + 1 < n && c - 1 >= 0 && c + 1 < m) {
+			int sum = map[r][c] + map[r + 1][c] + map[r][c - 1] + map[r][c + 1];
+			result = Math.max(result, sum);
+		}
+
+		// ㅏ
+		if (r - 1 >= 0 && r + 1 < n && c + 1 < m) {
+			int sum = map[r][c] + map[r - 1][c] + map[r + 1][c] + map[r][c + 1];
+			result = Math.max(result, sum);
+		}
+
+		// ㅓ
+		if (r - 1 >= 0 && r + 1 < n && c - 1 >= 0) {
+			int sum = map[r][c] + map[r - 1][c] + map[r + 1][c] + map[r][c - 1];
+			result = Math.max(result, sum);
 		}
 	}
 }
