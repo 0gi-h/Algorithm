@@ -8,18 +8,18 @@ public class Main {
 
     static int n, m, k;
     static String[][] map;
-
+    
     static int[] dr = {1, 0, -1, 0};
     static int[] dc = {0, 1, 0, -1};
 
-    static boolean[][][] visited;
+    static boolean[][][] visited; 
 
     static class Point {
-        int r, c;        
-        int dir;        
-        int prevBad;     
-        int curBad;     
-        int cnt;       
+        int r, c;       
+        int dir;       
+        int prevBad;  
+        int curBad;   
+        int cnt;    
 
         Point(int r, int c, int dir, int prevBad, int curBad, int cnt) {
             this.r = r;
@@ -73,9 +73,7 @@ public class Main {
                 int nr = cur.r + dr[i];
                 int nc = cur.c + dc[i];
 
-                if (nr < 0 || nc < 0 || nr >= n || nc >= m) continue;
-
-                if (map[nr][nc].equals("X")) continue;
+                if (nr < 0 || nc < 0 || nr >= n || nc >= m || map[nr][nc].equals("X") || visited[nr][nc][i]) continue;
 
                 if (cur.dir != -1 && (cur.dir + 2) % 4 == i) continue;
 
@@ -85,13 +83,10 @@ public class Main {
                 int totalBad = cur.prevBad + cur.curBad + nextBad;
                 if (totalBad > k) continue;
 
-                if (!visited[nr][nc][i]) {
-                    visited[nr][nc][i] = true;
-                    q.add(new Point(nr, nc, i, cur.curBad, nextBad, cur.cnt + 1));
-                }
+                visited[nr][nc][i] = true;
+                q.add(new Point(nr, nc, i, cur.curBad, nextBad, cur.cnt + 1));
             }
         }
-
         System.out.println(-1);
     }
 }
